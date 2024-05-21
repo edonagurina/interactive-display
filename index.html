@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weight Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('space.jpg');
+            background-size: cover;
+            color: white;
+            text-align: center;
+            padding-top: 50px;
+        }
+        #container {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 0 auto;
+            max-width: 400px;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
+            margin: 10px;
+        }
+        input[type="submit"], input[type="reset"] {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h2>Weight Converter</h2>
+        <form id="converterForm">
+            <label for="kilograms">Enter your weight in kilograms:</label><br>
+            <input type="number" id="kilograms" name="kilograms"><br>
+            <label for="pounds">Or enter your weight in pounds:</label><br>
+            <input type="number" id="pounds" name="pounds"><br>
+            <input type="submit" value="Convert">
+            <input type="reset" value="Reset">
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const converterForm = document.getElementById('converterForm');
+        const kilogramsInput = document.getElementById('kilograms');
+        const poundsInput = document.getElementById('pounds');
+        const resultDiv = document.getElementById('result');
+
+        // Check if there's stored data and populate the form
+        if (localStorage.getItem('weightConverterData')) {
+            const storedData = JSON.parse(localStorage.getItem('weightConverterData'));
+            kilogramsInput.value = storedData.kilograms;
+            poundsInput.value = storedData.pounds;
+            convertWeight();
+        }
+
+        converterForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            convertWeight();
+        });
+
+        converterForm.addEventListener('reset', function() {
+            localStorage.removeItem('weightConverterData');
+            kilogramsInput.value = '';
+            poundsInput.value = '';
+            resultDiv.innerHTML = '';
+        });
+
+        function convertWeight() {
+            let kilograms = parseFloat(kilogramsInput.value);
+            let pounds = parseFloat(poundsInput.value);
+
+            if (!isNaN(kilograms)) {
+                pounds = kilograms * 2.20462;
+                poundsInput.value = pounds.toFixed(2);
+            } else if (!isNaN(pounds)) {
+                kilograms = pounds / 2.20462;
+                kilogramsInput.value = kilograms.toFixed(2);
+            }
+
+            // Display result
+            resultDiv.innerHTML = `<p>Your weight in kilograms: ${kilograms.toFixed(2)}</p>
+                                   <p>Your weight in pounds: ${pounds.toFixed(2)}</p>`;
+
+            // Store data in local storage
+            const formData = {
+                kilograms: kilogramsInput.value,
+                pounds: poundsInput.value
+            };
+            localStorage.setItem('weightConverterData', JSON.stringify(formData));
+        }
+    </script>
+</body>
+</html>
